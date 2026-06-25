@@ -10,7 +10,7 @@ import weatherapp.domain.model.Weather
 import weatherapp.domain.usecase.GetWeatherByCityUseCase
 
 class HomeViewModel(
-    private val getWeatherByCity: GetWeatherByCityUseCase
+    private val getWeatherByCity: GetWeatherByCityUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)

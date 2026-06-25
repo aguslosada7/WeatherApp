@@ -6,7 +6,7 @@ import weatherapp.domain.model.Weather
 import weatherapp.domain.repository.WeatherRepository
 
 class WeatherRepositoryImpl(
-    private val api: WeatherApi
+    private val api: WeatherApi,
 ) : WeatherRepository {
 
     override suspend fun getWeatherByCity(city: String): Result<Weather> =
@@ -26,5 +26,5 @@ fun WeatherDto.toDomain() = Weather(
     iconCode = weather.firstOrNull()?.icon ?: "01d",
     windSpeed = wind.speed,
     tempMin = main.tempMin,
-    tempMax = main.tempMax
+    tempMax = main.tempMax,
 )
