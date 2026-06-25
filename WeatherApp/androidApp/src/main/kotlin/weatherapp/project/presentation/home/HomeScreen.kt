@@ -20,28 +20,43 @@ import org.koin.compose.viewmodel.koinViewModel
 import weatherapp.domain.model.Weather
 import weatherapp.presentation.home.HomeUiState
 import weatherapp.presentation.home.HomeViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeScreen(
+    onNavigateToSearch: () -> Unit,
+    viewModel: HomeViewModel = koinViewModel()
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1A237E),
-                        Color(0xFF42A5F5)
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onNavigateToSearch,
+                containerColor = Color.White.copy(alpha = 0.3f)
+            ) {
+                Icon(Icons.Default.Search, contentDescription = "Buscar", tint = Color.White)
+            }
+        },
+        containerColor = Color.Transparent
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF1A237E), Color(0xFF42A5F5))
                     )
-                )
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        when (val state = uiState) {
-            is HomeUiState.Loading -> CircularProgressIndicator(color = Color.White)
-            is HomeUiState.Error -> ErrorContent(message = state.message)
-            is HomeUiState.Success -> WeatherContent(weather = state.weather)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            when (val state = uiState) {
+                is HomeUiState.Loading -> CircularProgressIndicator(color = Color.White)
+                is HomeUiState.Error -> ErrorContent(message = state.message)
+                is HomeUiState.Success -> WeatherContent(weather = state.weather)
+            }
         }
     }
 }

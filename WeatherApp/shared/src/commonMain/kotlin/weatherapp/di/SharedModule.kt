@@ -13,6 +13,7 @@ import weatherapp.data.repository.WeatherRepositoryImpl
 import weatherapp.domain.repository.WeatherRepository
 import weatherapp.domain.usecase.GetWeatherByCityUseCase
 import weatherapp.presentation.home.HomeViewModel
+import weatherapp.presentation.search.SearchViewModel
 
 val sharedModule = module {
 
@@ -34,4 +35,5 @@ val sharedModule = module {
     single<WeatherRepository> { WeatherRepositoryImpl(get()) }
     factory { GetWeatherByCityUseCase(get()) }
     viewModel { HomeViewModel(get()) }
+    viewModel { SearchViewModel(get()) }
 }
