@@ -18,7 +18,7 @@ class HomeViewModel(
     private val getWeatherByCity: GetWeatherByCityUseCase,
     private val getWeatherByCoords: GetWeatherByCoordsUseCase,
     private val getForecastByCity: GetForecastByCityUseCase,
-    private val getForecastByCoords: GetForecastByCoordsUseCase
+    private val getForecastByCoords: GetForecastByCoordsUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)

@@ -6,12 +6,11 @@ import java.util.Calendar
 data class WeatherColors(
     val backgroundTop: Color,
     val backgroundBottom: Color,
-    val label: String
+    val label: String,
 )
 
 fun getTimeBasedColors(): WeatherColors {
-    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-    return when (hour) {
+    return when (Calendar.getInstance()[Calendar.HOUR_OF_DAY]) {
         in 5..6 -> WeatherColors(
             backgroundTop = Color(0xFF1A1A2E),
             backgroundBottom = Color(0xFFE8956D),

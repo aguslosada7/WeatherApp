@@ -10,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,14 +26,19 @@ import org.koin.compose.viewmodel.koinViewModel
 import weatherapp.domain.model.Weather
 import weatherapp.presentation.search.SearchUiState
 import weatherapp.presentation.search.SearchViewModel
+import weatherapp.domain.model.FavoriteCity
+import weatherapp.presentation.favorites.FavoritesViewModel
 
 @Composable
 fun SearchScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToFavorites: () -> Unit,
     viewModel: SearchViewModel = koinViewModel(),
+    favoritesViewModel: FavoritesViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
+    val isFavorite by favoritesViewModel.isFavoriteState.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
@@ -57,21 +63,20 @@ fun SearchScreen(
                     onClick = {
                         viewModel.reset()
                         onNavigateBack()
-                    },
+                    }
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Volver",
-                        tint = Color.White
-                    )
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver", tint = Color.White)
                 }
                 Text(
                     text = "Buscar ciudad",
                     color = Color.White,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier.padding(start = 8.dp).weight(1f)
                 )
+                IconButton(onClick = onNavigateToFavorites) {
+                    Text("⭐", fontSize = 20.sp)
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -117,7 +122,22 @@ fun SearchScreen(
                     CircularProgressIndicator(color = Color.White)
                 }
                 is SearchUiState.Error -> SearchErrorContent(message = state.message)
-                is SearchUiState.Success -> SearchResultContent(weather = state.weather)
+                is SearchUiState.Success -> {
+                    LaunchedEffect(state.weather.cityName) {
+                        favoritesViewModel.checkIsFavorite(state.weather.cityName)
+                    }
+                    SearchResultContent(
+                        weather = state.weather,
+                        isFavorite = isFavorite,
+                    ) {
+                        favoritesViewModel.toggleFavorite(
+                            FavoriteCity(
+                                cityName = state.weather.cityName,
+                                country = state.weather.country
+                            )
+                        )
+                    }
+                }
             }
         }
     }
@@ -160,24 +180,38 @@ fun SearchErrorContent(message: String) {
 }
 
 @Composable
-fun SearchResultContent(weather: Weather) {
+fun SearchResultContent(
+    weather: Weather,
+    isFavorite: Boolean,
+    onToggleFavorite: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.15f))
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "${weather.cityName}, ${weather.country}",
-                color = Color.White,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Medium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${weather.cityName}, ${weather.country}",
+                    color = Color.White,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                IconButton(onClick = onToggleFavorite) {
+                    Text(
+                        text = if (isFavorite) "⭐" else "☆",
+                        fontSize = 24.sp
+                    )
+                }
+            }
             AsyncImage(
                 model = weather.iconUrl,
                 contentDescription = weather.description,

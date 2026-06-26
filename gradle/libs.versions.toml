@@ -22,6 +22,8 @@ coil = "3.5.0"
 navigation = "2.9.8"
 play-services-location = "21.4.0"
 kotlinx-datetime = "0.8.0"
+supabase = "3.6.0"
+ktor-client = "3.5.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -60,6 +62,9 @@ koin-android-compose = { module = "io.insert-koin:koin-androidx-compose", versio
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play-services-location" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt", version.ref = "supabase" }
+supabase-gotrue = { module = "io.github.jan-tennert.supabase:auth-kt", version.ref = "supabase" }
+supabase-realtime = { module = "io.github.jan-tennert.supabase:realtime-kt", version.ref = "supabase" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

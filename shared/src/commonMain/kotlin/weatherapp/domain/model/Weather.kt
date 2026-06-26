@@ -24,3 +24,9 @@ data class HourlyForecast(
     val iconUrl: String
         get() = "https://openweathermap.org/img/wn/$iconCode@2x.png"
 }
+
+data class FavoriteCity(
+    val id: String = "",
+    val cityName: String,
+    val country: String
+)

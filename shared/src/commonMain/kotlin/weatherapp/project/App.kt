@@ -10,7 +10,7 @@ fun App(content: @Composable () -> Unit = {}) {
     KoinApplication(
         configuration = koinConfiguration {
             modules(sharedModule)
-        }
+        },
     ) {
         content()
     }
