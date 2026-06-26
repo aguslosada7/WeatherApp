@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.android.compose)
     implementation(libs.navigation.compose)
+    implementation(libs.play.services.location)
 }
 
 android {

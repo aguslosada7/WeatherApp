@@ -15,3 +15,12 @@ data class Weather(
     val iconUrl: String
         get() = "https://openweathermap.org/img/wn/$iconCode@2x.png"
 }
+
+data class HourlyForecast(
+    val hour: String,
+    val temperature: Double,
+    val iconCode: String
+) {
+    val iconUrl: String
+        get() = "https://openweathermap.org/img/wn/$iconCode@2x.png"
+}

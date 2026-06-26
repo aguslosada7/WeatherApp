@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import weatherapp.config.AppConfig
+import weatherapp.data.remote.dto.ForecastDto
 import weatherapp.data.remote.dto.WeatherDto
 
 class WeatherApi(private val client: HttpClient) {
@@ -27,5 +28,24 @@ class WeatherApi(private val client: HttpClient) {
             parameter("appid", apiKey)
             parameter("units", "metric")
             parameter("lang", "es")
+        }.body()
+
+    suspend fun getForecastByCoords(lat: Double, lon: Double): ForecastDto =
+        client.get("$baseUrl/forecast") {
+            parameter("lat", lat)
+            parameter("lon", lon)
+            parameter("appid", apiKey)
+            parameter("units", "metric")
+            parameter("lang", "es")
+            parameter("cnt", 9) // próximas ~24hs (cada entrada = 3hs)
+        }.body()
+
+    suspend fun getForecastByCity(city: String): ForecastDto =
+        client.get("$baseUrl/forecast") {
+            parameter("q", city)
+            parameter("appid", apiKey)
+            parameter("units", "metric")
+            parameter("lang", "es")
+            parameter("cnt", 9)
         }.body()
 }

@@ -12,28 +12,27 @@ import weatherapp.data.remote.api.WeatherApi
 import weatherapp.data.repository.WeatherRepositoryImpl
 import weatherapp.domain.repository.WeatherRepository
 import weatherapp.domain.usecase.GetWeatherByCityUseCase
+import weatherapp.domain.usecase.GetWeatherByCoordsUseCase
 import weatherapp.presentation.home.HomeViewModel
 import weatherapp.presentation.search.SearchViewModel
+import weatherapp.domain.usecase.GetForecastByCityUseCase
+import weatherapp.domain.usecase.GetForecastByCoordsUseCase
 
 val sharedModule = module {
-
     single {
         HttpClient {
             install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                })
+                json(Json { ignoreUnknownKeys = true; isLenient = true })
             }
-            install(Logging) {
-                level = LogLevel.BODY
-            }
+            install(Logging) { level = LogLevel.BODY }
         }
     }
-
     single { WeatherApi(get()) }
     single<WeatherRepository> { WeatherRepositoryImpl(get()) }
     factory { GetWeatherByCityUseCase(get()) }
-    viewModel { HomeViewModel(get()) }
+    factory { GetWeatherByCoordsUseCase(get()) }
+    factory { GetForecastByCityUseCase(get()) }
+    factory { GetForecastByCoordsUseCase(get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { SearchViewModel(get()) }
 }

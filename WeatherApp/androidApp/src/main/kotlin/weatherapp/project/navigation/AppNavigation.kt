@@ -1,5 +1,7 @@
 package weatherapp.project.navigation
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,21 +15,17 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "home",
+        enterTransition = { slideInHorizontally(tween(300)) { it } + fadeIn(tween(300)) },
+        exitTransition = { slideOutHorizontally(tween(300)) { -it } + fadeOut(tween(300)) },
+        popEnterTransition = { slideInHorizontally(tween(300)) { -it } + fadeIn(tween(300)) },
+        popExitTransition = { slideOutHorizontally(tween(300)) { it } + fadeOut(tween(300)) }
     ) {
         composable("home") {
-            HomeScreen(
-                onNavigateToSearch = {
-                    navController.navigate("search")
-                }
-            )
+            HomeScreen(onNavigateToSearch = { navController.navigate("search") })
         }
         composable("search") {
-            SearchScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
+            SearchScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }

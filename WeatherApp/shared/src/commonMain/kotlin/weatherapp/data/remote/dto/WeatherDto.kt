@@ -34,3 +34,16 @@ data class WindDto(val speed: Double)
 
 @Serializable
 data class SysDto(val country: String)
+
+@Serializable
+data class ForecastDto(
+    val list: List<ForecastItemDto>
+)
+
+@Serializable
+data class ForecastItemDto(
+    val dt: Long,
+    val main: MainDto,
+    val weather: List<WeatherDescriptionDto>,
+    val wind: WindDto
+)
