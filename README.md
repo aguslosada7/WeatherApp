@@ -86,8 +86,8 @@ package weatherapp.config
 
 object AppConfig {
     const val WEATHER_API_KEY = "tu_api_key_aqui"
-    const val SUPABASE_URL = "https://xxxx.supabase.co"
-    const val SUPABASE_ANON_KEY = "tu_anon_key_aqui"
+    const val SUPABASE_URL = "https://zpdfgsbdqcmmitmcjpfd.supabase.co"
+    const val SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwZGZnc2JkcWNtbWl0bWNqcGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzA3NDgsImV4cCI6MjA5NzkwNjc0OH0.dxAbGG_XktjLqWBQnoUXH-y5ZX0Q6-QRwO7ZdiU0sms"
 }
 ```
 
