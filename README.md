@@ -75,17 +75,23 @@ El criterio técnico aplicado sobre la salida de la IA incluyó: revisión de ca
 
 ---
 
-## 🔑 Configuración de API Keys
+## 🔑 Configuración
 
 1. Obtené tu API key gratuita en [openweathermap.org](https://openweathermap.org/api)
-2. Creá un proyecto en [supabase.com](https://supabase.com) y copiá la URL y la anon key
-3. En `local.properties` (no commitear):
+2. Creá el archivo `shared/src/commonMain/kotlin/weatherapp/config/AppConfig.kt`
+   con el siguiente contenido:
 
+```kotlin
+package weatherapp.config
+
+object AppConfig {
+    const val WEATHER_API_KEY = "tu_api_key_aqui"
+    const val SUPABASE_URL = "https://xxxx.supabase.co"
+    const val SUPABASE_ANON_KEY = "tu_anon_key_aqui"
+}
 ```
-WEATHER_API_KEY=tu_api_key_aqui
-SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_ANON_KEY=tu_anon_key_aqui
-```
+
+> Este archivo está en `.gitignore` por seguridad y debe crearse manualmente al clonar el proyecto.
 
 ---
 
