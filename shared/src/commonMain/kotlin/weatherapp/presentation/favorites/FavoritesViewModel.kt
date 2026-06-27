@@ -11,7 +11,6 @@ import weatherapp.domain.usecase.AddFavoriteUseCase
 import weatherapp.domain.usecase.GetFavoritesUseCase
 import weatherapp.domain.usecase.IsFavoriteUseCase
 import weatherapp.domain.usecase.RemoveFavoriteUseCase
-import weatherapp.presentation.favorites.ExpandedWeatherState
 
 class FavoritesViewModel(
     private val getFavorites: GetFavoritesUseCase,

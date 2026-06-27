@@ -1,44 +1,98 @@
 # 🌤️ WeatherApp
 
-Una aplicación Android nativa en Kotlin que muestra el clima actual de cualquier ciudad, permite buscar nuevas ubicaciones y guardar favoritos en la nube.
+Una aplicación **Kotlin Multiplatform (KMP)** que muestra el clima actual basado en tu ubicación, permite buscar ciudades y guardar favoritas en la nube.
 
 Desarrollada como parte del challenge técnico de **AranguriApps**.
+
+> ⚠️ **Nota de plataforma**: El proyecto está configurado para Android e iOS con KMP. Por limitaciones de hardware (sin entorno macOS/Xcode), la compilación y verificación iOS no fue posible. Sin embargo, toda la lógica de negocio, repositorios y ViewModels viven en `shared/commonMain` y son 100% reutilizables por la app iOS.
 
 ---
 
 ## 📱 Funcionalidades
 
-- Clima actual con temperatura, descripción, humedad, viento y sensación térmica
-- Búsqueda de ciudades por nombre
-- Guardado de ciudades favoritas sincronizado con Supabase
-- Navegación fluida entre pantallas con Jetpack Navigation
+- Clima actual basado en la **ubicación GPS** del dispositivo
+- Temperatura, descripción, humedad, viento y sensación térmica
+- **Pronóstico de las próximas 24 horas** con íconos animados
+- **Tema dinámico** que cambia los colores según la hora del día (amanecer, mañana, tarde, atardecer, noche)
+- **Íconos con tinte** según condición climática (sol dorado, luna azul, lluvia, tormenta, nieve)
+- **Búsqueda de ciudades** por nombre con resultado inmediato
+- **Ciudades favoritas** sincronizadas con Supabase, con vista expandible animada
+- Navegación fluida con transiciones entre pantallas
+- Manejo de errores con opción de reintento
 
 ---
 
 ## 🏗️ Arquitectura
 
-Se eligió **MVVM + Clean Architecture** por las siguientes razones:
+Se eligió **MVVM + Clean Architecture** con **Kotlin Multiplatform** por las siguientes razones:
 
-- **Separación de responsabilidades clara**: cada capa tiene una responsabilidad definida y no conoce los detalles de implementación de las otras.
-- **Testabilidad**: los Use Cases y ViewModels son fáciles de testear de forma aislada.
-- **Escalabilidad**: agregar nuevas features (ej. pronóstico extendido) no requiere tocar capas existentes.
-- **Recomendación oficial de Google** para aplicaciones Android modernas.
+- **Máxima reutilización de código**: toda la lógica (repositorios, use cases, ViewModels) vive en `shared/commonMain` y es compartida entre Android e iOS.
+- **Separación de responsabilidades**: cada capa tiene una responsabilidad definida e independiente.
+- **Testabilidad**: los Use Cases son testeables de forma aislada sin dependencias de plataforma.
+- **Escalabilidad**: agregar features o una nueva plataforma tiene impacto mínimo en el código existente.
 
 ### Capas
 
 ```
-presentation/   → Compose UI + ViewModels (estado de UI)
-domain/         → Use Cases + Interfaces de repositorios + Modelos de negocio
-data/           → Implementaciones (Retrofit, Supabase, mappers)
-di/             → Módulos de Hilt (inyección de dependencias)
+shared/commonMain
+├── domain/        → Modelos, interfaces de repositorios, Use Cases
+├── data/          → Implementaciones (Ktor, Supabase, mappers, DTOs)
+├── presentation/  → ViewModels compartidos
+└── di/            → Módulos de Koin
+
+composeApp (Android)
+├── presentation/  → Pantallas Compose
+├── navigation/    → AppNavigation con transiciones
+└── ui/            → Tema dinámico, tintes de íconos
+
+iosApp (iOS)
+└── ContentView    → UI SwiftUI (consume ViewModels del shared vía framework)
 ```
 
 ### Flujo de datos
 
 ```
-UI (Compose) → ViewModel → UseCase → Repository Interface
-                                            ↓
-                                   RepositoryImpl → API / Supabase
+Compose UI → ViewModel (shared) → UseCase (shared) → Repository Interface (shared)
+                                                              ↓
+                                                   RepositoryImpl → Ktor / Supabase
+```
+
+---
+
+## 🗺️ Diagrama de arquitectura
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    androidApp (Compose)                  │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐  │
+│  │  HomeScreen │  │ SearchScreen │  │FavoritesScreen│  │
+│  └──────┬──────┘  └──────┬───────┘  └───────┬───────┘  │
+└─────────┼────────────────┼──────────────────┼───────────┘
+          │                │                  │
+┌─────────▼────────────────▼──────────────────▼───────────┐
+│                  shared/commonMain                        │
+│  ┌──────────────────────────────────────────────────┐    │
+│  │                  presentation/                    │    │
+│  │  HomeViewModel  SearchViewModel  FavoritesVM     │    │
+│  └──────────────────────┬───────────────────────────┘    │
+│                         │                                 │
+│  ┌──────────────────────▼───────────────────────────┐    │
+│  │                    domain/                        │    │
+│  │  GetWeatherByCity  GetForecast  Favorites UCs    │    │
+│  │  WeatherRepository (interface)                   │    │
+│  └──────────────────────┬───────────────────────────┘    │
+│                         │                                 │
+│  ┌──────────────────────▼───────────────────────────┐    │
+│  │                     data/                         │    │
+│  │  WeatherRepositoryImpl  FavoritesRepositoryImpl  │    │
+│  │  WeatherApi (Ktor)      SupabaseClient           │    │
+│  └──────────────────────┬───────────────────────────┘    │
+└─────────────────────────┼────────────────────────────────┘
+                          │
+          ┌───────────────┴───────────────┐
+          ▼                               ▼
+  OpenWeatherMap API               Supabase (PostgreSQL)
+  (clima + forecast)               (ciudades favoritas)
 ```
 
 ---
@@ -47,17 +101,19 @@ UI (Compose) → ViewModel → UseCase → Repository Interface
 
 | Tecnología | Uso |
 |---|---|
-| Kotlin | Lenguaje principal |
-| Jetpack Compose | UI declarativa |
-| MVVM + Clean Architecture | Arquitectura |
-| Hilt | Inyección de dependencias |
-| Retrofit + Gson | Llamadas HTTP y parsing |
-| OkHttp Logging Interceptor | Debug de red |
-| Coil | Carga de imágenes (íconos del clima) |
-| Kotlin Coroutines + Flow | Programación asíncrona y estado reactivo |
-| Navigation Compose | Navegación entre pantallas |
-| OpenWeatherMap API | Datos del clima |
-| Supabase | Backend para favoritos |
+| Kotlin Multiplatform | Lógica compartida Android + iOS |
+| Jetpack Compose | UI declarativa Android |
+| Ktor | Networking multiplataforma |
+| Kotlinx Serialization | Parsing JSON |
+| Koin | Inyección de dependencias KMP-compatible |
+| Kotlinx Coroutines + Flow | Asincronismo y estado reactivo |
+| Kotlinx DateTime | Manejo de timestamps del forecast |
+| Coil 3 | Carga de imágenes con soporte KMP |
+| Navigation Compose (JetBrains) | Navegación con transiciones animadas |
+| OpenWeatherMap API | Clima actual y pronóstico horario |
+| Supabase (Postgrest) | Backend para ciudades favoritas |
+| Google Play Services Location | Geolocalización GPS |
+| MockK + Coroutines Test | Testing de Use Cases |
 
 ---
 
@@ -65,21 +121,24 @@ UI (Compose) → ViewModel → UseCase → Repository Interface
 
 Durante el desarrollo se utilizó **Claude (Anthropic)** como copiloto principal:
 
-- **Scaffolding inicial**: generación de la estructura de carpetas y clases base (DTOs, repositorios, módulos de Hilt).
-- **Boilerplate de Compose**: pantallas iniciales con estado de loading/error/success.
-- **Mappers**: transformación de DTOs de la API a modelos de dominio.
-- **Debugging**: identificación de errores de compilación y problemas de configuración de Gradle.
-- **README**: estructura y redacción de la documentación.
+- **Scaffolding inicial**: estructura de módulos KMP, configuración de `build.gradle.kts` para targets Android e iOS.
+- **Setup de Ktor y Supabase**: configuración del cliente HTTP, plugins de serialización y cliente Supabase KMP.
+- **Módulos Koin**: definición del grafo de dependencias compartido entre plataformas.
+- **DTOs y mappers**: data classes con `@Serializable` y transformación a modelos de dominio.
+- **ViewModels compartidos**: manejo de `StateFlow`, `sealed class` para estados de UI y coroutines.
+- **UI con Compose**: pantallas, animaciones, tema dinámico por hora y tintes de íconos.
+- **Unit tests**: estructura de tests con MockK para Use Cases.
+- **Debugging**: resolución de conflictos de versiones de Gradle, compatibilidad KMP y errores de compilación.
+- **README y documentación**: estructura, redacción y diagrama de arquitectura.
 
-El criterio técnico aplicado sobre la salida de la IA incluyó: revisión de cada clase generada, ajuste de nombres y paquetes al proyecto real, corrección de imports, y auditoría de que la arquitectura respete las capas definidas.
+El criterio técnico aplicado incluyó: revisión de compatibilidad KMP de cada dependencia, ajuste de versiones para evitar conflictos, corrección de imports entre `commonMain`/`androidMain`, auditoría de que la arquitectura respete las capas definidas, y validación de que el código generado compile y funcione correctamente.
 
 ---
 
 ## 🔑 Configuración
 
 1. Obtené tu API key gratuita en [openweathermap.org](https://openweathermap.org/api)
-2. Creá el archivo `shared/src/commonMain/kotlin/weatherapp/config/AppConfig.kt`
-   con el siguiente contenido:
+2. Creá el archivo `shared/src/commonMain/kotlin/weatherapp/config/AppConfig.kt` con el siguiente contenido:
 
 ```kotlin
 package weatherapp.config
@@ -92,6 +151,7 @@ object AppConfig {
 ```
 
 > Este archivo está en `.gitignore` por seguridad y debe crearse manualmente al clonar el proyecto.
+> La `SUPABASE_ANON_KEY` es una clave pública por diseño — lo que protege los datos son las Row Level Security policies de Supabase.
 
 ---
 
@@ -99,7 +159,7 @@ object AppConfig {
 
 ### Requisitos previos
 
-- Android Studio Hedgehog (2023.1.1) o superior
+- Android Studio Meerkat (2024.3) o superior
 - JDK 17
 - Android SDK API 26+
 - Conexión a internet (para la API y Supabase)
@@ -108,86 +168,83 @@ object AppConfig {
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tuusuario/weather-app.git
+git clone https://github.com/aguslosada7/WeatherApp.git
 cd weather-app
 
-# 2. Agregar las API keys en local.properties (ver sección anterior)
+# 2. Crear AppConfig.kt con las keys (ver sección anterior)
 
-# 3. Sincronizar Gradle
-# Abrir en Android Studio → File → Sync Project with Gradle Files
+# 3. Abrir en Android Studio
+# File → Open → seleccionar la carpeta raíz del proyecto
 
-# 4. Correr en emulador o dispositivo físico
-# Run → Run 'app'  (o Shift+F10)
+# 4. Sincronizar Gradle
+# File → Sync Project with Gradle Files
+
+# 5. Correr en emulador o dispositivo físico
+# Seleccionar androidApp → Run (Shift+F10)
 ```
-
-También podés instalar directamente el APK adjunto sin necesidad de compilar.
 
 ---
 
 ## 📁 Estructura del proyecto
 
 ```
-app/src/main/java/com/tuapp/weather/
-├── data/
-│   ├── remote/
-│   │   ├── api/          # Interfaces de Retrofit
-│   │   └── dto/          # Data classes de la API
-│   ├── repository/       # Implementaciones de repositorios + mappers
-│   └── local/            # Cliente Supabase y operaciones de favoritos
-├── domain/
-│   ├── model/            # Modelos de negocio
-│   ├── repository/       # Interfaces (contratos)
-│   └── usecase/          # Casos de uso
-├── presentation/
-│   ├── home/             # Pantalla principal + ViewModel
-│   ├── search/           # Búsqueda de ciudades + ViewModel
-│   └── favorites/        # Favoritos + ViewModel
-├── di/                   # Módulos de Hilt
-└── ui/theme/             # Tema, colores, tipografía
-```
-
----
-
-## 🗃️ Base de datos (Supabase)
-
-Tabla `favorite_cities`:
-
-```sql
-create table favorite_cities (
-  id uuid default gen_random_uuid() primary key,
-  city_name text not null,
-  country text not null,
-  created_at timestamp with time zone default now()
-);
+WeatherApp/
+├── androidApp/                              # App Android
+│   └── src/main/kotlin/weatherapp/project/
+│       ├── MainActivity.kt
+│       ├── navigation/AppNavigation.kt
+│       ├── presentation/
+│       │   ├── home/HomeScreen.kt
+│       │   ├── search/SearchScreen.kt
+│       │   └── favorites/FavoritesScreen.kt
+│       └── ui/WeatherTheme.kt
+│
+├── iosApp/                                  # App iOS (requiere macOS)
+│
+└── shared/                                  # Lógica compartida KMP
+    └── src/commonMain/kotlin/weatherapp/
+        ├── config/AppConfig.kt
+        ├── data/
+        │   ├── api/                         # DTOs + cliente Ktor
+        │   ├── local/                       # Supabase + DTOs locales
+        │   └── repository/                  # Implementaciones
+        ├── domain/
+        │   ├── model/                       # Modelos de negocio
+        │   └── usecase/                     # Use Cases + interfaces de repositorios
+        ├── presentation/
+        │   ├── home/
+        │   ├── search/
+        │   └── favorites/
+        └── di/SharedModule.kt
 ```
 
 ---
 
 ## 🧪 Tests
 
-<!-- Completar cuando se agreguen tests -->
+Tests unitarios implementados en `shared/src/commonTest/`:
 
-- [ ] Unit tests para Use Cases
-- [ ] Unit tests para ViewModels
-- [ ] Tests de integración del repositorio
+- `GetWeatherByCityUseCaseTest` — éxito, fallo y verificación de llamada al repositorio
+- `GetWeatherByCoordsUseCaseTest` — éxito, fallo y verificación de coordenadas exactas
+- `FavoritesUseCasesTest` — GetFavorites, AddFavorite, RemoveFavorite e IsFavorite
 
----
-
-## 📸 Capturas de pantalla
-
-<!-- Agregar capturas cuando la app esté terminada -->
-
-| Home | Búsqueda | Favoritos |
-|------|----------|-----------|
-| _pronto_ | _pronto_ | _pronto_ |
+```bash
+# Correr tests
+./gradlew :shared:testDebugUnitTest
+```
 
 ---
+
 
 ## 📝 Decisiones técnicas
 
-- **`Result<T>`** nativo de Kotlin para manejo de errores, evitando dependencias adicionales como Arrow.
-- **`StateFlow`** sobre `LiveData` por ser más idiomático con Coroutines y Compose.
-- **Hilt** sobre Koin por ser la solución recomendada por Google y con mejor soporte en el ecosistema Jetpack.
-- **Coil** sobre Glide/Picasso por su soporte nativo para Compose.
+- **Ktor sobre Retrofit**: Retrofit no es compatible con KMP; Ktor es la opción nativa para networking multiplataforma.
+- **Koin sobre Hilt**: Hilt es exclusivo de Android; Koin tiene soporte completo para KMP y `commonMain`.
+- **Kotlinx Serialization sobre Gson/Moshi**: solución oficial de JetBrains, compatible con KMP sin reflection.
+- **`Result<T>`** nativo de Kotlin para manejo de errores, sin dependencias adicionales como Arrow.
+- **`StateFlow`** sobre `LiveData` por ser multiplataforma y más idiomático con Coroutines y Compose.
+- **Navigation Compose de JetBrains** sobre la de AndroidX para evitar conflictos con Compose Multiplatform.
+- **`async`/`await` en paralelo** en HomeViewModel para cargar clima y forecast simultáneamente, reduciendo el tiempo de carga.
+- **Tema dinámico por hora** en vez de seguir el tema del sistema, para una experiencia más inmersiva y contextual.
 
 ---
