@@ -1,4 +1,4 @@
-package weatherapp.presentation.favorites
+package weatherapp.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import weatherapp.domain.model.FavoriteCity
+import weatherapp.domain.model.Weather
 import weatherapp.domain.usecase.AddFavoriteUseCase
 import weatherapp.domain.usecase.GetFavoritesUseCase
 import weatherapp.domain.usecase.IsFavoriteUseCase
@@ -74,7 +75,7 @@ class FavoritesViewModel(
     private val _selectedCityId = MutableStateFlow<String?>(null)
     val selectedCityId: StateFlow<String?> = _selectedCityId.asStateFlow()
 
-    fun selectCity(city: FavoriteCity, getWeatherByCity: suspend (String) -> Result<weatherapp.domain.model.Weather>) {
+    fun selectCity(city: FavoriteCity, getWeatherByCity: suspend (String) -> Result<Weather>) {
         viewModelScope.launch {
             if (_selectedCityId.value == city.id) {
                 // colapsar si ya está seleccionada
@@ -104,6 +105,6 @@ sealed class FavoritesUiState {
 
 sealed class ExpandedWeatherState {
     data object Loading : ExpandedWeatherState()
-    data class Success(val weather: weatherapp.domain.model.Weather) : ExpandedWeatherState()
+    data class Success(val weather: Weather) : ExpandedWeatherState()
     data object Error : ExpandedWeatherState()
 }

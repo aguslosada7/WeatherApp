@@ -1,4 +1,4 @@
-package weatherapp.presentation.search
+package weatherapp.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -13,8 +13,8 @@ import weatherapp.data.repository.WeatherRepositoryImpl
 import weatherapp.domain.repository.WeatherRepository
 import weatherapp.domain.usecase.GetWeatherByCityUseCase
 import weatherapp.domain.usecase.GetWeatherByCoordsUseCase
-import weatherapp.presentation.home.HomeViewModel
-import weatherapp.presentation.search.SearchViewModel
+import weatherapp.presentation.HomeViewModel
+import weatherapp.presentation.SearchViewModel
 import weatherapp.domain.usecase.GetForecastByCityUseCase
 import weatherapp.domain.usecase.GetForecastByCoordsUseCase
 import weatherapp.data.repository.FavoritesRepositoryImpl
@@ -23,7 +23,7 @@ import weatherapp.domain.usecase.AddFavoriteUseCase
 import weatherapp.domain.usecase.GetFavoritesUseCase
 import weatherapp.domain.usecase.IsFavoriteUseCase
 import weatherapp.domain.usecase.RemoveFavoriteUseCase
-import weatherapp.presentation.favorites.FavoritesViewModel
+import weatherapp.presentation.FavoritesViewModel
 
 val sharedModule = module {
     single {

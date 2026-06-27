@@ -1,4 +1,4 @@
-package weatherapp.presentation.home
+package weatherapp.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +13,8 @@ import weatherapp.domain.usecase.GetForecastByCityUseCase
 import weatherapp.domain.usecase.GetForecastByCoordsUseCase
 import weatherapp.domain.usecase.GetWeatherByCityUseCase
 import weatherapp.domain.usecase.GetWeatherByCoordsUseCase
+import io.github.jan.supabase.auth.auth
+import weatherapp.data.local.supabaseClient
 
 class HomeViewModel(
     private val getWeatherByCity: GetWeatherByCityUseCase,
@@ -23,6 +25,20 @@ class HomeViewModel(
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            try {
+                // Si el usuario no tiene una sesión activa, creamos una anónima
+                if (supabaseClient.auth.currentSessionOrNull() == null) {
+                    supabaseClient.auth.signInAnonymously()
+                }
+            } catch (e: Exception) {
+                // Si falla por falta de internet, se reintentará en el próximo reinicio
+                e.printStackTrace()
+            }
+        }
+    }
 
     fun loadWeatherByCoords(lat: Double, lon: Double) {
         viewModelScope.launch {
