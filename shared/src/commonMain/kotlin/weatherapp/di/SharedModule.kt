@@ -27,9 +27,15 @@ import weatherapp.presentation.favorites.FavoritesViewModel
 
 val sharedModule = module {
     single {
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
+    }
+    single {
         HttpClient {
             install(ContentNegotiation) {
-                json(Json { ignoreUnknownKeys = true; isLenient = true })
+                json(get<Json>())
             }
             install(Logging) { level = LogLevel.BODY }
         }

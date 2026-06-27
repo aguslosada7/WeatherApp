@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import weatherapp.project.presentation.favorites.FavoritesScreen
-import weatherapp.project.presentation.home.HomeScreen
-import weatherapp.project.presentation.search.SearchScreen
+import weatherapp.project.presentation.FavoritesScreen
+import weatherapp.project.presentation.SearchScreen
+import weatherapp.project.presentation.HomeScreen
 
 @Composable
 fun AppNavigation() {

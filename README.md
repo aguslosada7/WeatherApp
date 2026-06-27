@@ -63,27 +63,27 @@ Compose UI → ViewModel (shared) → UseCase (shared) → Repository Interface 
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    androidApp (Compose)                  │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐  │
-│  │  HomeScreen │  │ SearchScreen │  │FavoritesScreen│  │
-│  └──────┬──────┘  └──────┬───────┘  └───────┬───────┘  │
+│                    androidApp (Compose)                 │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐   │
+│  │  HomeScreen │  │ SearchScreen │  │FavoritesScreen│   │
+│  └──────┬──────┘  └──────┬───────┘  └───────┬───────┘   │
 └─────────┼────────────────┼──────────────────┼───────────┘
           │                │                  │
-┌─────────▼────────────────▼──────────────────▼───────────┐
-│                  shared/commonMain                        │
+┌─────────▼────────────────▼──────────────────▼────────────┐
+│                  shared/commonMain                       │
 │  ┌──────────────────────────────────────────────────┐    │
-│  │                  presentation/                    │    │
+│  │                  presentation/                   │    │
 │  │  HomeViewModel  SearchViewModel  FavoritesVM     │    │
 │  └──────────────────────┬───────────────────────────┘    │
-│                         │                                 │
+│                         │                                │
 │  ┌──────────────────────▼───────────────────────────┐    │
-│  │                    domain/                        │    │
+│  │                    domain/                       │    │
 │  │  GetWeatherByCity  GetForecast  Favorites UCs    │    │
 │  │  WeatherRepository (interface)                   │    │
 │  └──────────────────────┬───────────────────────────┘    │
-│                         │                                 │
+│                         │                                │
 │  ┌──────────────────────▼───────────────────────────┐    │
-│  │                     data/                         │    │
+│  │                     data/                        │    │
 │  │  WeatherRepositoryImpl  FavoritesRepositoryImpl  │    │
 │  │  WeatherApi (Ktor)      SupabaseClient           │    │
 │  └──────────────────────┬───────────────────────────┘    │
@@ -185,41 +185,6 @@ cd weather-app
 
 ---
 
-## 📁 Estructura del proyecto
-
-```
-WeatherApp/
-├── androidApp/                              # App Android
-│   └── src/main/kotlin/weatherapp/project/
-│       ├── MainActivity.kt
-│       ├── navigation/AppNavigation.kt
-│       ├── presentation/
-│       │   ├── home/HomeScreen.kt
-│       │   ├── search/SearchScreen.kt
-│       │   └── favorites/FavoritesScreen.kt
-│       └── ui/WeatherTheme.kt
-│
-├── iosApp/                                  # App iOS (requiere macOS)
-│
-└── shared/                                  # Lógica compartida KMP
-    └── src/commonMain/kotlin/weatherapp/
-        ├── config/AppConfig.kt
-        ├── data/
-        │   ├── api/                         # DTOs + cliente Ktor
-        │   ├── local/                       # Supabase + DTOs locales
-        │   └── repository/                  # Implementaciones
-        ├── domain/
-        │   ├── model/                       # Modelos de negocio
-        │   └── usecase/                     # Use Cases + interfaces de repositorios
-        ├── presentation/
-        │   ├── home/
-        │   ├── search/
-        │   └── favorites/
-        └── di/SharedModule.kt
-```
-
----
-
 ## 🧪 Tests
 
 Tests unitarios implementados en `shared/src/commonTest/`:
@@ -234,7 +199,6 @@ Tests unitarios implementados en `shared/src/commonTest/`:
 ```
 
 ---
-
 
 ## 📝 Decisiones técnicas
 
