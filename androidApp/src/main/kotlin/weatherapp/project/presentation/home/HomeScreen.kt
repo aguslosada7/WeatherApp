@@ -133,7 +133,10 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) { CircularProgressIndicator(color = Color.White) }
-                is HomeUiState.Error -> ErrorContent(message = state.message)
+                is HomeUiState.Error -> ErrorContent(
+                    message = state.message,
+                    onRetry = { viewModel.loadWeatherByCity("Buenos Aires") }
+                )
                 is HomeUiState.Success -> WeatherContent(
                     weather = state.weather,
                     hourlyForecast = state.hourlyForecast
@@ -308,14 +311,36 @@ fun WeatherStatDivider() {
 }
 
 @Composable
-fun ErrorContent(message: String) {
+fun ErrorContent(message: String, onRetry: (() -> Unit)? = null) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("⚠️", fontSize = 48.sp)
             Spacer(modifier = Modifier.height(16.dp))
-            Text("No se pudo cargar el clima", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+            Text(
+                text = "No se pudo cargar el clima",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(message, color = Color.White.copy(alpha = 0.7f), fontSize = 14.sp)
+            Text(
+                text = message,
+                color = Color.White.copy(alpha = 0.7f),
+                fontSize = 14.sp
+            )
+            if (onRetry != null) {
+                Spacer(modifier = Modifier.height(24.dp))
+                FilledTonalButton(
+                    onClick = onRetry,
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = Color.White.copy(alpha = 0.2f),
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text("Reintentar")
+                }
+            }
         }
     }
 }

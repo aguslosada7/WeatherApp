@@ -195,7 +195,7 @@ fun ExpandedWeatherContent(weather: Weather) {
             AsyncImage(
                 model = weather.iconUrl,
                 contentDescription = weather.description,
-                modifier = Modifier.size(120.dp),
+                modifier = Modifier.size(56.dp), // era 120.dp
                 colorFilter = ColorFilter.tint(
                     color = getIconTint(weather.iconCode),
                     blendMode = BlendMode.SrcAtop

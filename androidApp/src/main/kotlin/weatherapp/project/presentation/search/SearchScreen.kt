@@ -31,6 +31,7 @@ import weatherapp.presentation.search.SearchViewModel
 import weatherapp.domain.model.FavoriteCity
 import weatherapp.presentation.favorites.FavoritesViewModel
 import weatherapp.project.ui.getIconTint
+import weatherapp.project.ui.getTimeBasedColors
 
 @Composable
 fun SearchScreen(
@@ -43,12 +44,14 @@ fun SearchScreen(
     val query by viewModel.query.collectAsStateWithLifecycle()
     val isFavorite by favoritesViewModel.isFavoriteState.collectAsStateWithLifecycle()
 
+    val colors = getTimeBasedColors()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFF1A237E), Color(0xFF42A5F5)),
+                    colors = listOf(colors.backgroundTop, colors.backgroundBottom)
                 )
             )
     ) {
@@ -90,9 +93,6 @@ fun SearchScreen(
                 onValueChange = viewModel::onQueryChange,
                 placeholder = {
                     Text("Ej: Madrid, Tokyo, New York", color = Color.White.copy(alpha = 0.6f))
-                },
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null, tint = Color.White)
                 },
                 trailingIcon = {
                     IconButton(onClick = viewModel::search) {
@@ -171,12 +171,19 @@ fun SearchErrorContent(message: String) {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("⚠️", fontSize = 48.sp)
+            Text("🌐", fontSize = 48.sp)
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = message,
+                text = "Ciudad no encontrada",
                 color = Color.White,
-                fontSize = 16.sp
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Verificá el nombre e intentá de nuevo",
+                color = Color.White.copy(alpha = 0.65f),
+                fontSize = 14.sp
             )
         }
     }
