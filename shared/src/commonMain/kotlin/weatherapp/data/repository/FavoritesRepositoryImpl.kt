@@ -1,9 +1,9 @@
 package weatherapp.data.repository
 
 import io.github.jan.supabase.postgrest.from
-import weatherapp.data.local.dto.FavoriteCityDto
-import weatherapp.data.local.dto.toDto
-import weatherapp.data.local.dto.toDomain
+import weatherapp.data.local.FavoriteCityDto
+import weatherapp.data.local.toDto
+import weatherapp.data.local.toDomain
 import weatherapp.data.local.supabaseClient
 import weatherapp.domain.model.FavoriteCity
 import weatherapp.domain.repository.FavoritesRepository
