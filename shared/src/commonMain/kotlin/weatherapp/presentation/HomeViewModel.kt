@@ -29,7 +29,10 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             try {
-                // Si el usuario no tiene una sesión activa, creamos una anónima
+                // 1. Esperamos a que Supabase recupere la sesión local si existe
+                supabaseClient.auth.awaitInitialization()
+
+                // 2. Ahora sí comprobamos de forma segura si hay sesión
                 if (supabaseClient.auth.currentSessionOrNull() == null) {
                     supabaseClient.auth.signInAnonymously()
                 }
