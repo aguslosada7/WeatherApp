@@ -26,10 +26,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import org.koin.compose.viewmodel.koinViewModel
 import weatherapp.domain.model.Weather
-import weatherapp.presentation.search.SearchUiState
-import weatherapp.presentation.search.SearchViewModel
+import weatherapp.presentation.SearchUiState
+import weatherapp.presentation.SearchViewModel
 import weatherapp.domain.model.FavoriteCity
-import weatherapp.presentation.favorites.FavoritesViewModel
+import weatherapp.presentation.FavoritesViewModel
 import weatherapp.project.ui.getIconTint
 import weatherapp.project.ui.getTimeBasedColors
 

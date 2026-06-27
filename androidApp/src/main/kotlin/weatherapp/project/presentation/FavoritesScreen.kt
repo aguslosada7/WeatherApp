@@ -28,9 +28,9 @@ import org.koin.compose.viewmodel.koinViewModel
 import weatherapp.domain.model.FavoriteCity
 import weatherapp.domain.model.Weather
 import weatherapp.domain.usecase.GetWeatherByCityUseCase
-import weatherapp.presentation.favorites.ExpandedWeatherState
-import weatherapp.presentation.favorites.FavoritesUiState
-import weatherapp.presentation.favorites.FavoritesViewModel
+import weatherapp.presentation.ExpandedWeatherState
+import weatherapp.presentation.FavoritesUiState
+import weatherapp.presentation.FavoritesViewModel
 import weatherapp.project.ui.getIconTint
 import weatherapp.project.ui.getTimeBasedColors
 

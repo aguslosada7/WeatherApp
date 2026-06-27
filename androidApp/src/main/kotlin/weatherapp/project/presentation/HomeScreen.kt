@@ -30,8 +30,8 @@ import coil3.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import weatherapp.domain.model.Weather
-import weatherapp.presentation.home.HomeUiState
-import weatherapp.presentation.home.HomeViewModel
+import weatherapp.presentation.HomeUiState
+import weatherapp.presentation.HomeViewModel
 import weatherapp.project.location.getCurrentLocation
 import weatherapp.project.ui.getIconTint
 import weatherapp.project.ui.getTimeBasedColors
