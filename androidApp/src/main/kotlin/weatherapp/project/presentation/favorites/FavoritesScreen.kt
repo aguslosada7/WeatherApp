@@ -14,8 +14,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +31,7 @@ import weatherapp.domain.usecase.GetWeatherByCityUseCase
 import weatherapp.presentation.favorites.ExpandedWeatherState
 import weatherapp.presentation.favorites.FavoritesUiState
 import weatherapp.presentation.favorites.FavoritesViewModel
+import weatherapp.project.ui.getIconTint
 import weatherapp.project.ui.getTimeBasedColors
 
 @Composable
@@ -192,7 +195,11 @@ fun ExpandedWeatherContent(weather: Weather) {
             AsyncImage(
                 model = weather.iconUrl,
                 contentDescription = weather.description,
-                modifier = Modifier.size(56.dp)
+                modifier = Modifier.size(120.dp),
+                colorFilter = ColorFilter.tint(
+                    color = getIconTint(weather.iconCode),
+                    blendMode = BlendMode.SrcAtop
+                )
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(

@@ -70,9 +70,14 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.supabase.postgrest)
+            implementation(libs.supabase.gotrue)
+            implementation(libs.supabase.realtime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.mockk)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
