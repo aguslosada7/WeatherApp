@@ -151,6 +151,8 @@ fun WeatherContent(
     hourlyForecast: List<HourlyForecast>,
     dailyForecast: List<DailyForecast>
 ) {
+    val todayForecast = dailyForecast.firstOrNull()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -200,7 +202,11 @@ fun WeatherContent(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "↑${weather.tempMax.toInt()}°  ↓${weather.tempMin.toInt()}°",
+            text = if (todayForecast != null) {
+                "↑${todayForecast.tempMax.toInt()}°  ↓${todayForecast.tempMin.toInt()}°"
+            } else {
+                "↑${weather.tempMax.toInt()}°  ↓${weather.tempMin.toInt()}°"
+            },
             color = Color.White.copy(alpha = 0.65f),
             fontSize = 15.sp
         )
