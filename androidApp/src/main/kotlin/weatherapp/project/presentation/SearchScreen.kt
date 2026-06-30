@@ -171,7 +171,7 @@ fun SearchErrorContent(message: String) {
             Text("🌐", fontSize = 48.sp)
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Ciudad no encontrada",
+                text = message,
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium

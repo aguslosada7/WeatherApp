@@ -5,8 +5,6 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import weatherapp.config.AppConfig
-import weatherapp.data.remote.dto.ForecastDto
-import weatherapp.data.remote.dto.WeatherDto
 
 class WeatherApi(private val client: HttpClient) {
 

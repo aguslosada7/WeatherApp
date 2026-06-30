@@ -3,8 +3,8 @@
 package weatherapp.data.repository
 
 import weatherapp.data.api.WeatherApi
-import weatherapp.data.remote.dto.ForecastItemDto
-import weatherapp.data.remote.dto.WeatherDto
+import weatherapp.data.api.ForecastItemDto
+import weatherapp.data.api.WeatherDto
 import weatherapp.domain.model.DailyForecast
 import weatherapp.domain.model.HourlyForecast
 import weatherapp.domain.model.Weather

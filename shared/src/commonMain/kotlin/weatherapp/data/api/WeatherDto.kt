@@ -1,4 +1,4 @@
-package weatherapp.data.remote.dto
+package weatherapp.data.api
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
