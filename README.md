@@ -192,6 +192,22 @@ cd weather-app
 
 ---
 
+## 🗃️ Base de datos (Supabase)
+
+Tabla `favorite_cities`:
+
+```sql
+create table favorite_cities (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid not null default auth.uid(),
+  city_name text not null,
+  country text not null,
+  created_at timestamp with time zone default now()
+);
+```
+
+---
+
 ## 🧪 Tests
 
 Tests unitarios implementados en `shared/src/commonTest/`:
