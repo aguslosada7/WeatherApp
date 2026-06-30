@@ -22,6 +22,13 @@ Desarrollada como parte del challenge técnico de **AranguriApps**.
 
 ---
 
+## ⚠️ Limitaciones de la API
+
+- El plan gratuito de OpenWeatherMap (`/forecast`) provee datos cada 3 horas, no en tiempo real por hora. El pronóstico de 24hs se arma interpolando estas entradas de 3 en 3.
+- El mismo endpoint cubre **5 días**, por eso el pronóstico diario muestra el día de hoy más los siguientes cuatro días.
+
+---
+
 ## 🏗️ Arquitectura
 
 Se eligió **MVVM + Clean Architecture** con **Kotlin Multiplatform** por las siguientes razones:
@@ -62,32 +69,32 @@ Compose UI → ViewModel (shared) → UseCase (shared) → Repository Interface 
 ## 🗺️ Diagrama de arquitectura
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    androidApp (Compose)                 │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐   │
-│  │  HomeScreen │  │ SearchScreen │  │FavoritesScreen│   │
-│  └──────┬──────┘  └──────┬───────┘  └───────┬───────┘   │
-└─────────┼────────────────┼──────────────────┼───────────┘
+┌────────────────────────────────────────────────────────┐
+│                    androidApp (Compose)                │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐  │
+│  │  HomeScreen │  │ SearchScreen │  │FavoritesScreen│  │
+│  └──────┬──────┘  └──────┬───────┘  └───────┬───────┘  │
+└─────────┼────────────────┼──────────────────┼──────────┘
           │                │                  │
-┌─────────▼────────────────▼──────────────────▼────────────┐
-│                  shared/commonMain                       │
-│  ┌──────────────────────────────────────────────────┐    │
-│  │                  presentation/                   │    │
-│  │  HomeViewModel  SearchViewModel  FavoritesVM     │    │
-│  └──────────────────────┬───────────────────────────┘    │
-│                         │                                │
-│  ┌──────────────────────▼───────────────────────────┐    │
-│  │                    domain/                       │    │
-│  │  GetWeatherByCity  GetForecast  Favorites UCs    │    │
-│  │  WeatherRepository (interface)                   │    │
-│  └──────────────────────┬───────────────────────────┘    │
-│                         │                                │
-│  ┌──────────────────────▼───────────────────────────┐    │
-│  │                     data/                        │    │
-│  │  WeatherRepositoryImpl  FavoritesRepositoryImpl  │    │
-│  │  WeatherApi (Ktor)      SupabaseClient           │    │
-│  └──────────────────────┬───────────────────────────┘    │
-└─────────────────────────┼────────────────────────────────┘
+┌─────────▼────────────────▼──────────────────▼──────────┐
+│                  shared/commonMain                     │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │                  presentation/                   │  │
+│  │  HomeViewModel  SearchViewModel  FavoritesVM     │  │
+│  └──────────────────────┬───────────────────────────┘  │
+│                         │                              │
+│  ┌──────────────────────▼───────────────────────────┐  │
+│  │                    domain/                       │  │
+│  │  GetWeatherByCity  GetForecast  Favorites UCs    │  │
+│  │  WeatherRepository (interface)                   │  │
+│  └──────────────────────┬───────────────────────────┘  │
+│                         │                              │
+│  ┌──────────────────────▼───────────────────────────┐  │
+│  │                     data/                        │  │
+│  │  WeatherRepositoryImpl  FavoritesRepositoryImpl  │  │
+│  │  WeatherApi (Ktor)      SupabaseClient           │  │
+│  └──────────────────────┬───────────────────────────┘  │
+└─────────────────────────┼──────────────────────────────┘
                           │
           ┌───────────────┴───────────────┐
           ▼                               ▼
