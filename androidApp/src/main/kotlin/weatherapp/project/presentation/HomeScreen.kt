@@ -17,10 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,7 +31,6 @@ import weatherapp.domain.model.Weather
 import weatherapp.presentation.HomeUiState
 import weatherapp.presentation.HomeViewModel
 import weatherapp.project.location.getCurrentLocation
-import weatherapp.project.ui.getIconTint
 import weatherapp.project.ui.getTimeBasedColors
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -183,11 +180,7 @@ fun WeatherContent(
         AsyncImage(
             model = weather.iconUrl,
             contentDescription = weather.description,
-            modifier = Modifier.size(120.dp),
-            colorFilter = ColorFilter.tint(
-                color = getIconTint(weather.iconCode),
-                blendMode = BlendMode.SrcAtop
-            )
+            modifier = Modifier.size(120.dp)
         )
 
         Text(
@@ -267,11 +260,7 @@ fun HourlyForecastItem(item: HourlyForecast, isFirst: Boolean) {
         AsyncImage(
             model = item.iconUrl,
             contentDescription = null,
-            modifier = Modifier.size(44.dp),
-            colorFilter = ColorFilter.tint(
-                color = getIconTint(item.iconCode),
-                blendMode = BlendMode.SrcAtop
-            )
+            modifier = Modifier.size(44.dp)
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
@@ -402,11 +391,7 @@ fun DailyForecastCard(forecast: List<DailyForecast>) {
                     AsyncImage(
                         model = day.iconUrl,
                         contentDescription = null,
-                        modifier = Modifier.size(32.dp),
-                        colorFilter = ColorFilter.tint(
-                            color = getIconTint(day.iconCode),
-                            blendMode = BlendMode.SrcAtop
-                        )
+                        modifier = Modifier.size(32.dp)
                     )
 
                     Spacer(modifier = Modifier.weight(1f))

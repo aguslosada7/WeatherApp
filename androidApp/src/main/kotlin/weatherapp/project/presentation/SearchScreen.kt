@@ -14,10 +14,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -30,7 +28,6 @@ import weatherapp.presentation.SearchUiState
 import weatherapp.presentation.SearchViewModel
 import weatherapp.domain.model.FavoriteCity
 import weatherapp.presentation.FavoritesViewModel
-import weatherapp.project.ui.getIconTint
 import weatherapp.project.ui.getTimeBasedColors
 
 @Composable
@@ -225,11 +222,7 @@ fun SearchResultContent(
             AsyncImage(
                 model = weather.iconUrl,
                 contentDescription = weather.description,
-                modifier = Modifier.size(120.dp),
-                colorFilter = ColorFilter.tint(
-                    color = getIconTint(weather.iconCode),
-                    blendMode = BlendMode.SrcAtop
-                )
+                modifier = Modifier.size(120.dp)
             )
             Text(
                 text = "${weather.temperature.toInt()}°C",

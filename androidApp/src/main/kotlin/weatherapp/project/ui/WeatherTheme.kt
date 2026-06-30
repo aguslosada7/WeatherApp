@@ -43,17 +43,3 @@ fun getTimeBasedColors(): WeatherColors {
         )
     }
 }
-
-fun getIconTint(iconCode: String): Color = when {
-    iconCode.endsWith("n") -> when {
-        iconCode.startsWith("01") -> Color(0xFFB3C5E8) // luna despejada — azul pálido
-        iconCode.startsWith("02") -> Color(0xFF90A4AE) // luna con nubes — gris azulado
-        else -> Color(0xFFB3C5E8) // cualquier otro nocturno
-    }
-    iconCode.startsWith("01") -> Color(0xFFFFBF00) // sol despejado — dorado
-    iconCode.startsWith("02") || iconCode.startsWith("03") -> Color(0xFFB0BEC5) // nubes — gris claro
-    iconCode.startsWith("09") || iconCode.startsWith("10") -> Color(0xFF90CAF9) // lluvia — azul claro
-    iconCode.startsWith("11") -> Color(0xFFCE93D8) // tormenta — violeta
-    iconCode.startsWith("13") -> Color(0xFFE3F2FD) // nieve — blanco azulado
-    else -> Color.White
-}
