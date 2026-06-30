@@ -30,3 +30,14 @@ data class FavoriteCity(
     val cityName: String,
     val country: String
 )
+
+data class DailyForecast(
+    val dayName: String,
+    val tempMin: Double,
+    val tempMax: Double,
+    val iconCode: String,
+    val rainProbability: Int
+) {
+    val iconUrl: String
+        get() = "https://openweathermap.org/img/wn/$iconCode@2x.png"
+}

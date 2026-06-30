@@ -1,4 +1,4 @@
-package weatherapp.domain.repository
+package weatherapp.domain.usecase
 
 import weatherapp.domain.model.FavoriteCity
 

@@ -6,7 +6,7 @@ import weatherapp.data.local.toDto
 import weatherapp.data.local.toDomain
 import weatherapp.data.local.supabaseClient
 import weatherapp.domain.model.FavoriteCity
-import weatherapp.domain.repository.FavoritesRepository
+import weatherapp.domain.usecase.FavoritesRepository
 
 class FavoritesRepositoryImpl : FavoritesRepository {
 

@@ -41,6 +41,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import weatherapp.domain.model.HourlyForecast
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import weatherapp.domain.model.DailyForecast
 
 @Composable
 fun HomeScreen(
@@ -139,7 +140,8 @@ fun HomeScreen(
                 )
                 is HomeUiState.Success -> WeatherContent(
                     weather = state.weather,
-                    hourlyForecast = state.hourlyForecast
+                    hourlyForecast = state.hourlyForecast,
+                    dailyForecast = state.dailyForecast
                 )
             }
         }
@@ -147,11 +149,15 @@ fun HomeScreen(
 }
 
 @Composable
-fun WeatherContent(weather: Weather, hourlyForecast: List<HourlyForecast>) {
+fun WeatherContent(
+    weather: Weather,
+    hourlyForecast: List<HourlyForecast>,
+    dailyForecast: List<DailyForecast>
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()), // permite scroll si no entra
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(24.dp))
@@ -216,7 +222,13 @@ fun WeatherContent(weather: Weather, hourlyForecast: List<HourlyForecast>) {
 
         WeatherDetailsCard(weather = weather)
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (dailyForecast.isNotEmpty()) {
+            DailyForecastCard(dailyForecast)
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
     }
 }
 
@@ -339,6 +351,83 @@ fun ErrorContent(message: String, onRetry: (() -> Unit)? = null) {
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text("Reintentar")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DailyForecastCard(forecast: List<DailyForecast>) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.15f))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            forecast.forEach { day ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Día
+                    Text(
+                        text = day.dayName,
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.width(90.dp)
+                    )
+
+                    // Probabilidad de lluvia
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.width(52.dp)
+                    ) {
+                        Text("💧", fontSize = 12.sp)
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "${day.rainProbability}%",
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 13.sp
+                        )
+                    }
+
+                    // Ícono
+                    AsyncImage(
+                        model = day.iconUrl,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        colorFilter = ColorFilter.tint(
+                            color = getIconTint(day.iconCode),
+                            blendMode = BlendMode.SrcAtop
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // Min / Max
+                    Text(
+                        text = "${day.tempMax.toInt()}°",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.width(36.dp),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.End
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "${day.tempMin.toInt()}°",
+                        color = Color.White.copy(alpha = 0.55f),
+                        fontSize = 15.sp,
+                        modifier = Modifier.width(32.dp),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.End
+                    )
                 }
             }
         }

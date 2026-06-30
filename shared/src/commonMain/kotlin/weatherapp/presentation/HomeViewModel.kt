@@ -7,8 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import weatherapp.domain.model.DailyForecast
 import weatherapp.domain.model.HourlyForecast
 import weatherapp.domain.model.Weather
+import weatherapp.domain.usecase.GetDailyForecastByCityUseCase
+import weatherapp.domain.usecase.GetDailyForecastByCoordsUseCase
 import weatherapp.domain.usecase.GetForecastByCityUseCase
 import weatherapp.domain.usecase.GetForecastByCoordsUseCase
 import weatherapp.domain.usecase.GetWeatherByCityUseCase
@@ -21,6 +24,8 @@ class HomeViewModel(
     private val getWeatherByCoords: GetWeatherByCoordsUseCase,
     private val getForecastByCity: GetForecastByCityUseCase,
     private val getForecastByCoords: GetForecastByCoordsUseCase,
+    private val getDailyForecastByCity: GetDailyForecastByCityUseCase,
+    private val getDailyForecastByCoords: GetDailyForecastByCoordsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
@@ -29,15 +34,11 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             try {
-                // 1. Esperamos a que Supabase recupere la sesión local si existe
                 supabaseClient.auth.awaitInitialization()
-
-                // 2. Ahora sí comprobamos de forma segura si hay sesión
                 if (supabaseClient.auth.currentSessionOrNull() == null) {
                     supabaseClient.auth.signInAnonymously()
                 }
             } catch (e: Exception) {
-                // Si falla por falta de internet, se reintentará en el próximo reinicio
                 e.printStackTrace()
             }
         }
@@ -48,13 +49,16 @@ class HomeViewModel(
             _uiState.value = HomeUiState.Loading
             val weatherDeferred = async { getWeatherByCoords(lat, lon) }
             val forecastDeferred = async { getForecastByCoords(lat, lon) }
+            val dailyDeferred = async { getDailyForecastByCoords(lat, lon) }
             val weather = weatherDeferred.await()
             val forecast = forecastDeferred.await()
+            val daily = dailyDeferred.await()
             weather
                 .onSuccess { w ->
                     _uiState.value = HomeUiState.Success(
                         weather = w,
-                        hourlyForecast = forecast.getOrDefault(emptyList())
+                        hourlyForecast = forecast.getOrDefault(emptyList()),
+                        dailyForecast = daily.getOrDefault(emptyList())
                     )
                 }
                 .onFailure { _uiState.value = HomeUiState.Error(it.message ?: "Error") }
@@ -66,13 +70,16 @@ class HomeViewModel(
             _uiState.value = HomeUiState.Loading
             val weatherDeferred = async { getWeatherByCity(city) }
             val forecastDeferred = async { getForecastByCity(city) }
+            val dailyDeferred = async { getDailyForecastByCity(city) }
             val weather = weatherDeferred.await()
             val forecast = forecastDeferred.await()
+            val daily = dailyDeferred.await()
             weather
                 .onSuccess { w ->
                     _uiState.value = HomeUiState.Success(
                         weather = w,
-                        hourlyForecast = forecast.getOrDefault(emptyList())
+                        hourlyForecast = forecast.getOrDefault(emptyList()),
+                        dailyForecast = daily.getOrDefault(emptyList())
                     )
                 }
                 .onFailure { _uiState.value = HomeUiState.Error(it.message ?: "Error") }
@@ -84,7 +91,8 @@ sealed class HomeUiState {
     data object Loading : HomeUiState()
     data class Success(
         val weather: Weather,
-        val hourlyForecast: List<HourlyForecast>
+        val hourlyForecast: List<HourlyForecast>,
+        val dailyForecast: List<DailyForecast>
     ) : HomeUiState()
     data class Error(val message: String) : HomeUiState()
 }

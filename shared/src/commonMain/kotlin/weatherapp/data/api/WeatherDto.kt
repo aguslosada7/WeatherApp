@@ -45,5 +45,6 @@ data class ForecastItemDto(
     val dt: Long,
     val main: MainDto,
     val weather: List<WeatherDescriptionDto>,
-    val wind: WindDto
+    val wind: WindDto,
+    @SerialName("pop") val pop: Double = 0.0
 )

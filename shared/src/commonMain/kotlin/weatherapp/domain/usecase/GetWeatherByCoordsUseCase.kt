@@ -1,7 +1,6 @@
 package weatherapp.domain.usecase
 
 import weatherapp.domain.model.Weather
-import weatherapp.domain.repository.WeatherRepository
 
 class GetWeatherByCoordsUseCase(
     private val repository: WeatherRepository

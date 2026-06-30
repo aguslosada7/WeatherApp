@@ -5,7 +5,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import weatherapp.domain.model.FavoriteCity
-import weatherapp.domain.repository.FavoritesRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

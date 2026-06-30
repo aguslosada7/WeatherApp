@@ -1,4 +1,4 @@
-package weatherapp.data.remote.api
+package weatherapp.data.api
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -37,7 +37,6 @@ class WeatherApi(private val client: HttpClient) {
             parameter("appid", apiKey)
             parameter("units", "metric")
             parameter("lang", "es")
-            parameter("cnt", 9) // próximas ~24hs (cada entrada = 3hs)
         }.body()
 
     suspend fun getForecastByCity(city: String): ForecastDto =
@@ -46,6 +45,5 @@ class WeatherApi(private val client: HttpClient) {
             parameter("appid", apiKey)
             parameter("units", "metric")
             parameter("lang", "es")
-            parameter("cnt", 9)
         }.body()
 }

@@ -5,7 +5,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import weatherapp.domain.model.Weather
-import weatherapp.domain.repository.WeatherRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

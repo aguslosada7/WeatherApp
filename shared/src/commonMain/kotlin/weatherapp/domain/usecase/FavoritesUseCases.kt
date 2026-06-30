@@ -1,7 +1,6 @@
 package weatherapp.domain.usecase
 
 import weatherapp.domain.model.FavoriteCity
-import weatherapp.domain.repository.FavoritesRepository
 
 class GetFavoritesUseCase(private val repository: FavoritesRepository) {
     suspend operator fun invoke(): Result<List<FavoriteCity>> = repository.getFavorites()
