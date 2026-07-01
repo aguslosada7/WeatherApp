@@ -12,9 +12,9 @@ Desarrollada como parte del challenge técnico de **AranguriApps**.
 
 - Clima actual basado en la **ubicación GPS** del dispositivo
 - Temperatura, descripción, humedad, viento y sensación térmica
-- **Pronóstico de las próximas 24 horas** con íconos animados
+- **Pronóstico de las próximas 24 horas**
 - **Tema dinámico** que cambia los colores según la hora del día (amanecer, mañana, tarde, atardecer, noche)
-- **Íconos con tinte** según condición climática (sol dorado, luna azul, lluvia, tormenta, nieve)
+- Íconos según condición climática (sol, luna, lluvia, tormenta, nieve)
 - **Búsqueda de ciudades** por nombre con resultado inmediato
 - **Ciudades favoritas** sincronizadas con Supabase, con vista expandible animada
 - Navegación fluida con transiciones entre pantallas
@@ -43,14 +43,14 @@ Se eligió **MVVM + Clean Architecture** con **Kotlin Multiplatform** por las si
 ```
 shared/commonMain
 ├── domain/        → Modelos, interfaces de repositorios, Use Cases
-├── data/          → Implementaciones (Ktor, Supabase, mappers, DTOs)
+├── data/          → Implementaciones (Ktor, Supabase, mappers, DTOs, cache)
 ├── presentation/  → ViewModels compartidos
 └── di/            → Módulos de Koin
 
 composeApp (Android)
 ├── presentation/  → Pantallas Compose
 ├── navigation/    → AppNavigation con transiciones
-└── ui/            → Tema dinámico, tintes de íconos
+└── ui/            → Tema dinámico
 
 iosApp (iOS)
 └── ContentView    → UI SwiftUI (consume ViewModels del shared vía framework)
@@ -85,14 +85,15 @@ Compose UI → ViewModel (shared) → UseCase (shared) → Repository Interface 
 │                         │                              │
 │  ┌──────────────────────▼───────────────────────────┐  │
 │  │                    domain/                       │  │
-│  │  GetWeatherByCity  GetForecast  Favorites UCs    │  │
-│  │  WeatherRepository (interface)                   │  │
+│  │  GetWeather     GetForecast     Favorites (UCs)  │  │
+│  │  Weather        Favorites        (Repositories)  │  │
 │  └──────────────────────┬───────────────────────────┘  │
 │                         │                              │
 │  ┌──────────────────────▼───────────────────────────┐  │
 │  │                     data/                        │  │
 │  │  WeatherRepositoryImpl  FavoritesRepositoryImpl  │  │
 │  │  WeatherApi (Ktor)      SupabaseClient           │  │
+│  │  WeatherDto             WeatherCache             │  │
 │  └──────────────────────┬───────────────────────────┘  │
 └─────────────────────────┼──────────────────────────────┘
                           │
@@ -144,7 +145,7 @@ El criterio técnico aplicado incluyó: revisión de compatibilidad KMP de cada 
 
 ## 🔑 Configuración
 
-1. Obtené tu API key gratuita en [openweathermap.org](https://openweathermap.org/api)
+1. Obtené tu API key gratuita en [openweathermap.org](https://openweathermap.org/api) (requiere iniciar sesión)
 2. Creá el archivo `shared/src/commonMain/kotlin/weatherapp/config/AppConfig.kt` con el siguiente contenido:
 
 ```kotlin
@@ -158,7 +159,7 @@ object AppConfig {
 ```
 
 > Este archivo está en `.gitignore` por seguridad y debe crearse manualmente al clonar el proyecto.
-> La `SUPABASE_ANON_KEY` es una clave pública por diseño — lo que protege los datos son las Row Level Security policies de Supabase.
+> La `SUPABASE_ANON_KEY` es una clave pública por diseño. Lo que protege los datos son las Row Level Security policies de Supabase.
 
 ---
 
