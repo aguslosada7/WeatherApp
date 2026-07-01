@@ -190,6 +190,7 @@ fun SearchErrorContent(message: String) {
 fun SearchResultContent(
     weather: Weather,
     isFavorite: Boolean,
+    isStale: Boolean = false,
     onToggleFavorite: () -> Unit
 ) {
     Card(
@@ -201,6 +202,15 @@ fun SearchResultContent(
             modifier = Modifier.fillMaxWidth().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (isStale) {
+                Text(
+                    text = "📡 Sin conexión · último dato guardado",
+                    color = Color.White.copy(alpha = 0.6f),
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

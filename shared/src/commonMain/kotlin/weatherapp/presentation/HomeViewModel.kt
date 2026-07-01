@@ -18,6 +18,8 @@ import weatherapp.domain.usecase.GetWeatherByCityUseCase
 import weatherapp.domain.usecase.GetWeatherByCoordsUseCase
 import io.github.jan.supabase.auth.auth
 import weatherapp.data.local.supabaseClient
+import weatherapp.data.CachedWeatherData
+import weatherapp.data.WeatherCache
 
 class HomeViewModel(
     private val getWeatherByCity: GetWeatherByCityUseCase,
@@ -45,44 +47,92 @@ class HomeViewModel(
     }
 
     fun loadWeatherByCoords(lat: Double, lon: Double) {
+        val cacheKey = "coords_${lat}_$lon"
         viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading
+            val cached = WeatherCache.get(cacheKey)
+            if (cached != null) {
+                _uiState.value = HomeUiState.Success(
+                    weather = cached.weather,
+                    hourlyForecast = cached.hourlyForecast,
+                    dailyForecast = cached.dailyForecast,
+                    isStale = true
+                )
+            } else {
+                _uiState.value = HomeUiState.Loading
+            }
+
             val weatherDeferred = async { getWeatherByCoords(lat, lon) }
             val forecastDeferred = async { getForecastByCoords(lat, lon) }
             val dailyDeferred = async { getDailyForecastByCoords(lat, lon) }
             val weather = weatherDeferred.await()
             val forecast = forecastDeferred.await()
             val daily = dailyDeferred.await()
+
             weather
                 .onSuccess { w ->
-                    _uiState.value = HomeUiState.Success(
+                    val data = CachedWeatherData(
                         weather = w,
                         hourlyForecast = forecast.getOrDefault(emptyList()),
                         dailyForecast = daily.getOrDefault(emptyList())
                     )
+                    WeatherCache.put(cacheKey, data)
+                    _uiState.value = HomeUiState.Success(
+                        weather = data.weather,
+                        hourlyForecast = data.hourlyForecast,
+                        dailyForecast = data.dailyForecast,
+                        isStale = false
+                    )
                 }
-                .onFailure { _uiState.value = HomeUiState.Error(it.message ?: "Error") }
+                .onFailure {
+                    if (cached == null) {
+                        _uiState.value = HomeUiState.Error(it.message ?: "Error")
+                    }
+                }
         }
     }
 
     fun loadWeatherByCity(city: String) {
+        val cacheKey = "city_${city.lowercase()}"
         viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading
+            val cached = WeatherCache.get(cacheKey)
+            if (cached != null) {
+                _uiState.value = HomeUiState.Success(
+                    weather = cached.weather,
+                    hourlyForecast = cached.hourlyForecast,
+                    dailyForecast = cached.dailyForecast,
+                    isStale = true
+                )
+            } else {
+                _uiState.value = HomeUiState.Loading
+            }
+
             val weatherDeferred = async { getWeatherByCity(city) }
             val forecastDeferred = async { getForecastByCity(city) }
             val dailyDeferred = async { getDailyForecastByCity(city) }
             val weather = weatherDeferred.await()
             val forecast = forecastDeferred.await()
             val daily = dailyDeferred.await()
+
             weather
                 .onSuccess { w ->
-                    _uiState.value = HomeUiState.Success(
+                    val data = CachedWeatherData(
                         weather = w,
                         hourlyForecast = forecast.getOrDefault(emptyList()),
                         dailyForecast = daily.getOrDefault(emptyList())
                     )
+                    WeatherCache.put(cacheKey, data)
+                    _uiState.value = HomeUiState.Success(
+                        weather = data.weather,
+                        hourlyForecast = data.hourlyForecast,
+                        dailyForecast = data.dailyForecast,
+                        isStale = false
+                    )
                 }
-                .onFailure { _uiState.value = HomeUiState.Error(it.message ?: "Error") }
+                .onFailure {
+                    if (cached == null) {
+                        _uiState.value = HomeUiState.Error(it.message ?: "Error")
+                    }
+                }
         }
     }
 }
@@ -92,7 +142,8 @@ sealed class HomeUiState {
     data class Success(
         val weather: Weather,
         val hourlyForecast: List<HourlyForecast>,
-        val dailyForecast: List<DailyForecast>
+        val dailyForecast: List<DailyForecast>,
+        val isStale: Boolean = false
     ) : HomeUiState()
     data class Error(val message: String) : HomeUiState()
 }

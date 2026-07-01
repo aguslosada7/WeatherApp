@@ -138,7 +138,8 @@ fun HomeScreen(
                 is HomeUiState.Success -> WeatherContent(
                     weather = state.weather,
                     hourlyForecast = state.hourlyForecast,
-                    dailyForecast = state.dailyForecast
+                    dailyForecast = state.dailyForecast,
+                    isStale = state.isStale
                 )
             }
         }
@@ -149,7 +150,8 @@ fun HomeScreen(
 fun WeatherContent(
     weather: Weather,
     hourlyForecast: List<HourlyForecast>,
-    dailyForecast: List<DailyForecast>
+    dailyForecast: List<DailyForecast>,
+    isStale: Boolean = false
 ) {
     val todayForecast = dailyForecast.firstOrNull()
 
@@ -160,6 +162,19 @@ fun WeatherContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(24.dp))
+
+        if (isStale) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("📡", fontSize = 13.sp)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Sin conexión · mostrando último dato guardado",
+                    color = Color.White.copy(alpha = 0.6f),
+                    fontSize = 12.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(

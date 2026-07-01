@@ -78,21 +78,33 @@ class FavoritesViewModel(
     fun selectCity(city: FavoriteCity, getWeatherByCity: suspend (String) -> Result<Weather>) {
         viewModelScope.launch {
             if (_selectedCityId.value == city.id) {
-                // colapsar si ya está seleccionada
                 _selectedCityId.value = null
                 return@launch
             }
             _selectedCityId.value = city.id
-            if (_expandedWeather.value[city.id] == null) {
+
+            val cacheKey = "city_${city.cityName.lowercase()}"
+            val cached = weatherapp.data.WeatherCache.get(cacheKey)
+
+            if (cached != null) {
+                _expandedWeather.value += (city.id to ExpandedWeatherState.Success(cached.weather))
+            } else if (_expandedWeather.value[city.id] == null) {
                 _expandedWeather.value += (city.id to ExpandedWeatherState.Loading)
-                getWeatherByCity(city.cityName)
-                    .onSuccess { weather ->
-                        _expandedWeather.value += (city.id to ExpandedWeatherState.Success(weather))
-                    }
-                    .onFailure {
+            }
+
+            getWeatherByCity(city.cityName)
+                .onSuccess { weather ->
+                    weatherapp.data.WeatherCache.put(
+                        cacheKey,
+                        weatherapp.data.CachedWeatherData(weather, emptyList(), emptyList())
+                    )
+                    _expandedWeather.value += (city.id to ExpandedWeatherState.Success(weather))
+                }
+                .onFailure {
+                    if (cached == null) {
                         _expandedWeather.value += (city.id to ExpandedWeatherState.Error)
                     }
-            }
+                }
         }
     }
 }

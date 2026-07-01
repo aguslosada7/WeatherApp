@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 import weatherapp.domain.model.Weather
 import weatherapp.domain.usecase.GetWeatherByCityUseCase
 import kotlin.time.Duration.Companion.milliseconds
+import weatherapp.data.CachedWeatherData
+import weatherapp.data.WeatherCache
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
@@ -52,10 +54,25 @@ class SearchViewModel(
     }
 
     private suspend fun searchCity(city: String) {
-        _uiState.value = SearchUiState.Loading
+        val cacheKey = "city_${city.lowercase()}"
+        val cached = WeatherCache.get(cacheKey)
+
+        if (cached != null) {
+            _uiState.value = SearchUiState.Success(cached.weather, isStale = true)
+        } else {
+            _uiState.value = SearchUiState.Loading
+        }
+
         getWeatherByCity(city)
-            .onSuccess { _uiState.value = SearchUiState.Success(it) }
-            .onFailure { _uiState.value = SearchUiState.Error("Ciudad no encontrada") }
+            .onSuccess { w ->
+                WeatherCache.put(cacheKey, CachedWeatherData(w, emptyList(), emptyList()))
+                _uiState.value = SearchUiState.Success(w, isStale = false)
+            }
+            .onFailure {
+                if (cached == null) {
+                    _uiState.value = SearchUiState.Error("Ciudad no encontrada")
+                }
+            }
     }
 
     fun reset() {
@@ -67,6 +84,6 @@ class SearchViewModel(
 sealed class SearchUiState {
     data object Idle : SearchUiState()
     data object Loading : SearchUiState()
-    data class Success(val weather: Weather) : SearchUiState()
+    data class Success(val weather: Weather, val isStale: Boolean = false) : SearchUiState()
     data class Error(val message: String) : SearchUiState()
 }
