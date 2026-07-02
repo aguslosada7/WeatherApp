@@ -22,6 +22,4 @@ object WeatherCache {
     fun put(key: String, data: CachedWeatherData) {
         cache[key] = data
     }
-
-    fun has(key: String): Boolean = cache.containsKey(key)
 }
