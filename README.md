@@ -2,8 +2,6 @@
 
 Una aplicación **Kotlin Multiplatform (KMP)** que muestra el clima actual basado en tu ubicación, permite buscar ciudades y guardar favoritas en la nube.
 
-Desarrollada como parte del challenge técnico de **AranguriApps**.
-
 > ⚠️ **Nota de plataforma**: El proyecto está configurado para Android e iOS con KMP. Por limitaciones de hardware (sin entorno macOS/Xcode), la compilación y verificación iOS no fue posible. Sin embargo, toda la lógica de negocio, repositorios y ViewModels viven en `shared/commonMain` y son 100% reutilizables por la app iOS.
 
 ---
